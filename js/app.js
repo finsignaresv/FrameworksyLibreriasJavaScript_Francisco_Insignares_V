@@ -1,8 +1,14 @@
 var ruta = "";
 var r = "<img src = '";
 var s = "' class = 'elemento'/>";
+var t = "' class = 'elemento nuevaVertical' style='position:absolute;'/>";
+var u = "' class = 'elemento nuevaHorizontal' style='position:absolute;'/>";
 var imagen = "";
+var imagenAnimate = "";
 var rutaImagen = "";
+var rutaImagenNueva = "";
+var rutaImagenNuevaVertical = "";
+var rutaImagenNuevaHorizontal = "";
 var subClase = "col-";
 var ultimoTipo = " .elemento:last-of-type"
 var i = "";
@@ -17,6 +23,7 @@ var xMax= "";
 var yMax = "";
 var elemento1 = "";
 var elemento2 = "";
+var comparacion = "";
 var col1 = "";
 var col2 = "";
 var col3 = "";
@@ -25,6 +32,7 @@ var col5 = "";
 var col6 = "";
 var col7 = "";
 var pos1 = 147.93333435058594;
+var dispararAnimacion = 0;
 var finalizar = false;
 var elementos = "";
 var coordXElementoOculto = "";
@@ -43,7 +51,10 @@ var coordXOculto = new Array();
 var coordYOculto = new Array();
 var nuevosElementos = new Array();
 var posicionesMatriz = new Array();
+var matrizPosicionTop = new Array();
+var arreglo = new Array();
 var posicionTop = "";
+var posicionTopAnimate = "";
 var primeroDiferenteAnteriorV = "";
 var primeroIgualSegundoV = "";
 var segundoIgualTerceroV = "";
@@ -51,43 +62,20 @@ var terceroDiferenteCuartoV = "";
 var cuartoDiferenteQuintoV = "";
 var quintoDiferenteSextoV = "";
 var sextoDiferenteSeptimoV = "";
-
+var mayorRepetidoAnimate = "";
 var mayorRepetido = 0;
 var mayorRepetidoVertical = 0;
+var mayorRepetidoVerticalAnimate = "";
 var mayorRepetidoHorizontal = 0;
+var mayorRepetidoHorizontalAnimate = "";
 coordX = "";
 coordY = "";
 coordXVertical = "";
 coordYVertical = "";
 coordXHorizontal = "";
 coordYHorizontal = "";
+score = 0;
 
-
-
-
-
-//var timer = new Timer(
-//    {
-//      tick : 1,
-//      ontick : function (sec)
-//        {
-//          console.log('interval', sec);
-//        },
-//        onstart : function()
-//          {
-//            console.log('timer started');
-//          }
-//    });
-
-//// Definiendo opciones usadas sobre
-//timer.on('end', function ()
-//  {
-//    console.log('timer ended');
-//    this.start(4).off('end');
-//  });
-//
-////Iniciar el contador para 10 segundos
-//timer.start(10);
 
 //Codigo para eliminar conflictos entre jquery y prototype
 var $j = jQuery.noConflict();
@@ -116,6 +104,39 @@ $j(document).ready(function()
                 }
           },500);
       })
+  });
+
+  var timer = new Timer(
+      {
+        tick : 1,
+        ontick : function (sec)
+          {
+            console.log('interval', sec);
+            remainTime = (sec + 1000) / 1000;
+            remainSeconds = ('0' + Math.floor((remainTime) % 60)).slice(-2);
+            remainMinutes = ('0' + Math.floor((remainTime / 60) % 60)).slice(-2);
+            $j('#timer').html(remainMinutes + ":" + remainSeconds);
+          },
+          onstart : function()
+            {
+              console.log('timer started');
+            }
+      });
+
+  //Definiendo opciones usadas sobre
+  timer.on('end', function ()
+    {
+      console.log('timer ended');
+      this.start(0).off('end');
+    });
+
+  //Iniciar el contador para 10 segundos
+
+  iniciarReloj = function()
+    {
+      timer.start(120);
+    }
+
       //Funcion que genera una imagen aleatoria
       rutaAleatoria = function()
         {
@@ -129,6 +150,8 @@ $j(document).ready(function()
         {
           imagen = rutaAleatoria();
           rutaImagen = r + imagen + s;
+          rutaImagenNuevaVertical = r + imagen + t;
+          rutaImagenNuevaHorizontal = r + imagen + u;
           return rutaImagen;
         }
 
@@ -155,13 +178,13 @@ $j(document).ready(function()
 
       conformarMatriz = function()
         {
-          col1 = $$('.col-1 .elemento');
-          col2 = $$('.col-2 .elemento');
-          col3 = $$('.col-3 .elemento');
-          col4 = $$('.col-4 .elemento');
-          col5 = $$('.col-5 .elemento');
-          col6 = $$('.col-6 .elemento');
-          col7 = $$('.col-7 .elemento');
+          col1 = $j('.col-1 .elemento');
+          col2 = $j('.col-2 .elemento');
+          col3 = $j('.col-3 .elemento');
+          col4 = $j('.col-4 .elemento');
+          col5 = $j('.col-5 .elemento');
+          col6 = $j('.col-6 .elemento');
+          col7 = $j('.col-7 .elemento');
 
           elementos = [col1, col2, col3, col4, col5, col6, col7];
         }
@@ -195,7 +218,7 @@ $j(document).ready(function()
         //elemento1 = $$('body div div div')[0].childElements()[0];
       //console.log("elemento1: " + elemento1.inspect());
 
-function condicionalesVertical()
+condicionalesVertical = function()
   {
     primeroDiferenteAnteriorV = ($j(elementos[x][y]).attr('src')) !== ($j(elementos[x][y-1]).attr('src'));
     primeroIgualSegundoV = ($j(elementos[x][y]).attr('src')) == ($j(elementos[x][y+1]).attr('src'));
@@ -206,21 +229,21 @@ function condicionalesVertical()
     sextoDiferenteSeptimoV = ($j(elementos[x][y+5]).attr('src')) !== ($j(elementos[x][y+6]).attr('src'));
   }
 
-function repetidosVertical()
+repetidosVertical = function()
   {
     repetidosCuadro++;
     repetidosVerticalX.push(x);
     repetidosVerticalY.push(y);
   }
 
-function repetidosHorizontal()
+repetidosHorizontal = function()
   {
     repetidosCuadro++;
     repetidosHorizontalX.push(x);
     repetidosHorizontalY.push(y);
   }
 
-function buscarRepetidosVertical()
+buscarRepetidosVertical = function()
   {
     for (x = 0; x < 7; x ++)
     {
@@ -273,7 +296,7 @@ function buscarRepetidosVertical()
     }
   }
 
-  function buscarRepetidosHorizontal()
+  buscarRepetidosHorizontal = function()
     {
       for (x = 0; x < 5; x ++)
         {
@@ -281,7 +304,7 @@ function buscarRepetidosVertical()
             {
               if ((((x+2)<7) && (($j(elementos[x][y]).attr('src')) == ($j(elementos[x+1][y]).attr('src')))) && (($j(elementos[x+1][y]).attr('src')) == ($j(elementos[x+2][y]).attr('src'))))
                 {
-                  if ((x == 4) && (($j(elementos[x][y]).attr('src')) !== ($j(elementos[x-1][y]).attr('src'))))
+                  if (((x > 3) && (x < 5)) && (($j(elementos[x][y]).attr('src')) !== ($j(elementos[x-1][y]).attr('src'))))
                     {
                       repetidosHorizontal();
                       repetidosenLinea = 3;
@@ -289,7 +312,7 @@ function buscarRepetidosVertical()
                     }
 
 
-                  if (x == 0)
+                  else if (x < 1)
                     {
                       if (($j(elementos[x+2][y]).attr('src')) == ($j(elementos[x+3][y]).attr('src')))
                         {
@@ -332,7 +355,7 @@ function buscarRepetidosVertical()
                           }
                     }
 
-                  if (((x > 0) && (x < 4)) && ((($j(elementos[x][y]).attr('src')) !== ($j(elementos[x-1][y]).attr('src')))))
+                  else if (((x > 0) && (x < 4)) && ((($j(elementos[x][y]).attr('src')) !== ($j(elementos[x-1][y]).attr('src')))))
                     {
                       if (((x+3) < 7) && ($j(elementos[x+2][y]).attr('src') == ($j(elementos[x+3][y]).attr('src'))))
                         {
@@ -370,7 +393,7 @@ function buscarRepetidosVertical()
         }
     }
 
-eliminarRepetidos = function()
+determinarMayorRepetido = function()
   {
     if (repetidosConsecutivosVertical !== "")
       {
@@ -389,7 +412,7 @@ eliminarRepetidos = function()
       {
         for (y = 0; y < repetidosConsecutivosHorizontal.length; y ++)
           {
-            if (repetidosConsecutivosHorizontal[y] > mayorRepetidoVertical)
+            if (repetidosConsecutivosHorizontal[y] > mayorRepetidoHorizontal)
               {
                 mayorRepetidoHorizontal = repetidosConsecutivosHorizontal[y];
                 coordXHorizontal = repetidosHorizontalX[y];
@@ -410,24 +433,87 @@ eliminarRepetidos = function()
           coordX = coordXHorizontal;
           coordY = coordYHorizontal;
         }
+  }
 
-    for (z = 0; z < mayorRepetido; z ++)
+llenarVaciosVertical = function()
+  {
+    console.log('entro en vertical');
+
+    if ((coordY > 0) && (coordY < 5))
       {
-        if (mayorRepetidoVertical >= mayorRepetidoHorizontal)
+        for (i = 1; i <= (8-mayorRepetidoAnimate); i ++)
           {
-            coordXOculto.push(coordX);
-            coordYOculto.push(coordY+z);
-            generarImagenAleatoria();
-            //$j(elementos[coordX][coordY+z]).hide();
+            $j(elementos[coordX][coordY-i]).addClass('elementoAnteriorVertical');
           }
-          else
-            {
-              coordXOculto.push(coordX+z);
-              coordYOculto.push(coordY);
-              generarImagenAleatoria();
-              //$j(elementos[coordX+z][coordY]).hide();
-            }
+
       }
+      $j('.elementoAnteriorVertical').animate(
+        {
+          top:'+=96px'
+        },200,function()
+          {
+            $j('.elementoAnteriorVertical').removeClass('elementoAnteriorVertical')
+          })
+
+        generarImagenAleatoria();
+        $j(".col-" + (coordX+1)).prepend(rutaImagenNuevaVertical);
+
+        $j('.nuevaVertical').animate(
+          {
+            top: '+=96px'
+          },200,function()
+            {
+              $j('.nuevaVertical').removeClass('nuevaVertical');
+            });
+    iniciarMatrices();
+    iniciarElementos();
+  }
+
+llenarVaciosHorizontal = function()
+    {
+      setTimeout(function()
+        {
+          if (coordY > 0)
+            {
+              for (i = 0; i < mayorRepetidoAnimate; i ++)
+                {
+                  for (j = 1; j <= coordY; j ++)
+                    {
+                      $j(elementos[coordX+i][coordY-j]).addClass('elementoAnteriorHorizontal');
+                    }
+                }
+            }
+
+          $j('.elementoAnteriorHorizontal').animate(
+            {
+              top:'+=96px'
+            },200);
+
+          for (j = 0; j < mayorRepetidoAnimate; j ++)
+            {
+              generarImagenAleatoria();
+              $j(".col-" + (coordX+j+1)).prepend(rutaImagenNuevaHorizontal);
+            }
+
+          $j('.nuevaHorizontal').animate(
+            {
+              top: '+=96px'
+            },1000,function()
+              {
+                $j('.nuevaHorizontal').removeClass('nuevaHorizontal');
+              });
+
+          iniciarMatrices();
+          iniciarElementos();
+        },1000)
+    }
+
+iniciarElementos = function()
+  {
+    $j('.elementoAnteriorVertical').removeClass('elementoAnteriorVertical');
+    $j('.elementoAnteriorHorizontal').removeClass('elementoAnteriorHorizontal');
+    $j('.elementoIgualVertical').remove();
+    $j('.elementoIgualHorizontal').remove();
   }
 
 iniciarMatrices = function()
@@ -442,63 +528,136 @@ iniciarMatrices = function()
     coordYOculto.length = 0;
     nuevosElementos.length = 0;
     posicionesMatriz.length = 0;
-    repetidosenLinea = "";
+
+    repetidoVerticalX = "";
+    repetidoHorizontalX = "";
+    repetidoVerticalY = "";
+    repetidoHorizontalY = "";
+    coordXVertical = "";
+    coordXHorizontal = "";
+    coordYVertical = "";
+    coordYHorizontal = "";
+    mayorRepetidoHorizontalAnimate = "";
+    mayorRepetidoVerticalAnimate = "";
+    mayorRepetidoVericalAnimate = "";
+    mayorRepetidoHorizontalAnimate = "";
     mayorRepetidoHorizontal = "";
     mayorRepetidoVertical = "";
   }
 
-llenarVacios = function()
+animacionOcultarRepetidos = function()
   {
     if (mayorRepetidoVertical >= mayorRepetidoHorizontal)
       {
+        m = 0;
         for (m = 0; m < mayorRepetido; m ++)
           {
-            elementoTop = $j(elementos[coordX][coordY+m]).position().top;
-            imagen = rutaAleatoria();
-            $j(elementos[coordX][coordY+m]).css('top','-100px');
-            $j(elementos[coordX][coordY+m]).attr('src',imagen);
-            $j(elementos[coordX][coordY+m]).animate(
-              {
-                top:"90px"
-              }, 200);
-            $j(elementos[coordX][coordY+m]).animate(
-              {
-                top: elementoTop
-              }, 1000);
-
+            $j(elementos[coordX][coordY+m]).addClass('elementoIgualVertical');
           }
+          mayorRepetidoVerticalAnimate = mayorRepetidoVertical;
+          mayorRepetidoHorizontalAnimate = mayorRepetidoHorizontal;
+          mayorRepetidoAnimate = mayorRepetido;
+          $j('.elementoIgualVertical').animate(
+            {
+              opacity:0
+            },100,function()
+              {
+                $j(this).animate(
+                  {
+                    opacity:100
+                  },100,function()
+                    {
+                      $j(this).animate(
+                        {
+                          opacity:0
+                        },100,function()
+                          {
+                            $j(this).animate(
+                              {
+                                opacity:100
+                              },100,function()
+                                {
+                                  $j(this).animate(
+                                    {
+                                      opacity:0
+                                    },100,llenarVaciosVertical);
+                                }
+                             )
+                          }
+                       )
+                    }
+                 )
+              }
+          )
+
+
       }
+
       else if (mayorRepetidoHorizontal > mayorRepetidoVertical)
         {
+          n = 0;
           for (n = 0; n < mayorRepetido; n ++)
             {
-              elementoTop = $j(elementos[coordX+n][coordY]).position().top;
-              imagen = rutaAleatoria();
-              $j(elementos[coordX+n][coordY]).css('top','-100px');
-              $j(elementos[coordX+n][coordY]).attr('src',imagen);
-              $j(elementos[coordX+n][coordY]).animate(
-                {
-                  top:"90px"
-                }, 200);
-                  $j(elementos[coordX+n][coordY]).animate(
-                    {
-                      top: elementoTop
-                    }, 1000);
+              $j(elementos[coordX+n][coordY]).addClass('elementoIgualHorizontal');
             }
+            mayorRepetidoVerticalAnimate = mayorRepetidoVertical;
+            mayorRepetidoHorizontalAnimate = mayorRepetidoHorizontal;
+            mayorRepetidoAnimate = mayorRepetido;
+            $j('.elementoIgualHorizontal').animate(
+              {
+                opacity:0
+              },100,function()
+                {
+                  $j(this).animate(
+                    {
+                      opacity:100
+                    },100,function()
+                      {
+                        $j(this).animate(
+                          {
+                            opacity:0
+                          },100,function()
+                            {
+                              $j(this).animate(
+                                {
+                                  opacity:100
+                                },100,function()
+                                  {
+                                    $j(this).animate(
+                                      {
+                                        opacity:0
+                                      },100);
+                                  }
+
+                                )
+                            }
+                        )
+                      }
+                  )
+                }
+            )
+
         }
   }
 
+
 $j(function()
-  {$j("#btn-reinicio").on("click", function()
-    {
-      ejecutarMovimientos();
-    })
+  {
+    $j("#btn-reinicio").on("click", function()
+      {
+        iniciarReloj();
+        setInterval(function()
+          {
+            conformarMatriz();
+            movimientos();
+          },4000);
+      })
   })
 
     movimientos = function()
       {
-        setInterval(function()
-        {
+        setTimeout(function()
+          {
             buscarRepetidosVertical();
             console.log(repetidosConsecutivosVertical);
             console.log(repetidosVerticalX);
@@ -509,26 +668,24 @@ $j(function()
             console.log(repetidosHorizontalX);
             console.log(repetidosHorizontalY);
 
-            eliminarRepetidos();
+            determinarMayorRepetido();
             console.log("Mayor repetido: " + mayorRepetido);
             console.log("CoordX: " + coordX);
             console.log("CoordY: " + coordY);
 
-            llenarVacios();
-            iniciarMatrices();
-        },2000);
-      }
+            animacionOcultarRepetidos();
+            if (mayorRepetido != "")
+              {
+                score = score + 1;
+              }
+            $j('#score-text').html(score);
+            if (mayorRepetidoHorizontal > mayorRepetidoVertical)
+                {
+                  llenarVaciosHorizontal();
+                }
 
-    ejecutarMovimientos = function()
-      {
-        do
-          {
-            movimientos();
-          } while (mayorRepetido != "");
+          },1000);
       }
-      //})
-    //})
-
 
 
 llenarTablero();
@@ -540,7 +697,7 @@ obtenerMatrizAbsoluta();
 
 
 
-});
+
 
 
 

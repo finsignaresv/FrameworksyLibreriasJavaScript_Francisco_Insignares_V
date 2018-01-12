@@ -32,10 +32,25 @@ body{
     color: #FFFFFF;
   }
 
-.oculto
+.elementoIgualVertical
   {
-    display: none;
+
   }
+
+  .elementoIgualHorizontal
+    {
+
+    }
+
+.elementoAnteriorVertical
+  {
+
+  }
+
+  .elementoAnteriorHorizontal
+    {
+
+    }
 
 .panel-tablero{
   width: 70%;
@@ -114,5 +129,15 @@ div[class^='col']{
   {
     width: 99.4px;
     height: 96px;
-    position: relative;
+
   }
+
+  .nuevaVertical
+    {
+      top: 51.933px;
+    }
+
+  .nuevaHorizontal
+    {
+      top: 51.933px;
+    }
