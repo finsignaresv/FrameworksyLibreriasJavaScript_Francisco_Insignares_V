@@ -1,3 +1,4 @@
+//Declaracion de variales, constantes y funciones
 var ruta = "";
 var r = "<img src = '";
 var s = "' class = 'elemento'/>";
@@ -68,14 +69,18 @@ var mayorRepetidoVertical = 0;
 var mayorRepetidoVerticalAnimate = "";
 var mayorRepetidoHorizontal = 0;
 var mayorRepetidoHorizontalAnimate = "";
-coordX = "";
-coordY = "";
-coordXVertical = "";
-coordYVertical = "";
-coordXHorizontal = "";
-coordYHorizontal = "";
-score = 0;
-
+var score = 0;
+var movimiento = 0;
+var contador = 0;
+var coordX = "";
+var coordY = "";
+var coordXVertical = "";
+var coordYVertical = "";
+var coordXHorizontal = "";
+var coordYHorizontal = "";
+var myVar = 0;
+var tiempo = 0;
+var titulo = 0;
 
 //Codigo para eliminar conflictos entre jquery y prototype
 var $j = jQuery.noConflict();
@@ -91,7 +96,7 @@ $j(document).ready(function()
     //Funcion autoejecutable para generar el efecto de cambio de color en el titulo
     $j(function()
       {
-        setInterval(function()
+        titulo = setInterval(function()
           {
             var color = $j("#main-titulo").css("color");
             if (color == "rgb(220, 255, 14)")
@@ -106,6 +111,7 @@ $j(document).ready(function()
       })
   });
 
+//Funcion timer que controla el tiempo de juego
   var timer = new Timer(
       {
         tick : 1,
@@ -123,19 +129,25 @@ $j(document).ready(function()
             }
       });
 
-  //Definiendo opciones usadas sobre
+  //Definiendo opciones usadas sobre el tiempo
   timer.on('end', function ()
     {
-      console.log('timer ended');
-      this.start(0).off('end');
+      $j('#timer').html("00" + ":" + "00");
+      $j('div.panel-tablero, div.time').hide(1000);
+      $j('div.score, div.moves, div.panel-score').animate(
+        {
+          width:'100%'
+        },500);
+      clearInterval(myVar);
     });
 
-  //Iniciar el contador para 10 segundos
-
+  //Iniciar el contador para 120 segundos o 2 minutos
   iniciarReloj = function()
     {
       timer.start(120);
     }
+
+
 
       //Funcion que genera una imagen aleatoria
       rutaAleatoria = function()
@@ -175,7 +187,7 @@ $j(document).ready(function()
                 }
             }
         }
-
+//Funcion para conformar una matriz a partir de los 7 arrays
       conformarMatriz = function()
         {
           col1 = $j('.col-1 .elemento');
@@ -189,6 +201,7 @@ $j(document).ready(function()
           elementos = [col1, col2, col3, col4, col5, col6, col7];
         }
 
+//Funcion para obtener las posiciones absolutas de la matriz
       obtenerPosicionesElementos = function()
         {
           for (i = 0; i < 7; i ++)
@@ -200,6 +213,7 @@ $j(document).ready(function()
             }
         }
 
+//Regenerando matriz con posiciones absolutas
       obtenerMatrizAbsoluta = function()
         {
           z = 0;
@@ -214,10 +228,7 @@ $j(document).ready(function()
             }
         }
 
-
-        //elemento1 = $$('body div div div')[0].childElements()[0];
-      //console.log("elemento1: " + elemento1.inspect());
-
+//Condicionales para buscar los repetidos en direccion vertical
 condicionalesVertical = function()
   {
     primeroDiferenteAnteriorV = ($j(elementos[x][y]).attr('src')) !== ($j(elementos[x][y-1]).attr('src'));
@@ -229,6 +240,7 @@ condicionalesVertical = function()
     sextoDiferenteSeptimoV = ($j(elementos[x][y+5]).attr('src')) !== ($j(elementos[x][y+6]).attr('src'));
   }
 
+//Funcion para almacenar los repetidos en linea vertical en un array
 repetidosVertical = function()
   {
     repetidosCuadro++;
@@ -236,6 +248,7 @@ repetidosVertical = function()
     repetidosVerticalY.push(y);
   }
 
+//Funcion para almacenar los repetidos en linea horizontal en un array
 repetidosHorizontal = function()
   {
     repetidosCuadro++;
@@ -243,6 +256,7 @@ repetidosHorizontal = function()
     repetidosHorizontalY.push(y);
   }
 
+//Funcion que busca los elementos repetidos en direcci[on vertical]
 buscarRepetidosVertical = function()
   {
     for (x = 0; x < 7; x ++)
@@ -296,6 +310,7 @@ buscarRepetidosVertical = function()
     }
   }
 
+//Funcion que busca los elementos repetidos en linea en direccion horizontal
   buscarRepetidosHorizontal = function()
     {
       for (x = 0; x < 5; x ++)
@@ -310,7 +325,6 @@ buscarRepetidosVertical = function()
                       repetidosenLinea = 3;
                       repetidosConsecutivosHorizontal.push(repetidosenLinea);
                     }
-
 
                   else if (x < 1)
                     {
@@ -393,6 +407,7 @@ buscarRepetidosVertical = function()
         }
     }
 
+//Funcion para determinar el mayor nuemro de elementos repetidos bien sea en direccion vertical u horizontal
 determinarMayorRepetido = function()
   {
     if (repetidosConsecutivosVertical !== "")
@@ -435,17 +450,16 @@ determinarMayorRepetido = function()
         }
   }
 
+//Funcion que lleva los espacios vacios en direccion vertical
 llenarVaciosVertical = function()
   {
     console.log('entro en vertical');
-
     if ((coordY > 0) && (coordY < 5))
       {
         for (i = 1; i <= (8-mayorRepetidoAnimate); i ++)
           {
             $j(elementos[coordX][coordY-i]).addClass('elementoAnteriorVertical');
           }
-
       }
       $j('.elementoAnteriorVertical').animate(
         {
@@ -454,7 +468,7 @@ llenarVaciosVertical = function()
           {
             $j('.elementoAnteriorVertical').removeClass('elementoAnteriorVertical')
           })
-
+        $j('.elemento').droppable('disable');
         generarImagenAleatoria();
         $j(".col-" + (coordX+1)).prepend(rutaImagenNuevaVertical);
 
@@ -469,6 +483,7 @@ llenarVaciosVertical = function()
     iniciarElementos();
   }
 
+//Funcion que llena los espacios vacios en direccion horizontal
 llenarVaciosHorizontal = function()
     {
       setTimeout(function()
@@ -483,7 +498,7 @@ llenarVaciosHorizontal = function()
                     }
                 }
             }
-
+          $j('.elemento').droppable('disable');
           $j('.elementoAnteriorHorizontal').animate(
             {
               top:'+=96px'
@@ -508,14 +523,17 @@ llenarVaciosHorizontal = function()
         },1000)
     }
 
+//Funcion que remueve los elementos repetidos y las clases utilizadas para identificarlos
 iniciarElementos = function()
   {
     $j('.elementoAnteriorVertical').removeClass('elementoAnteriorVertical');
     $j('.elementoAnteriorHorizontal').removeClass('elementoAnteriorHorizontal');
     $j('.elementoIgualVertical').remove();
     $j('.elementoIgualHorizontal').remove();
+    addCandyEvents();
   }
 
+//Funcion que inicializa todas las variables y matrices utilizadas dentro de la operacion
 iniciarMatrices = function()
   {
     repetidosVerticalX.length = 0;
@@ -545,8 +563,10 @@ iniciarMatrices = function()
     mayorRepetidoVertical = "";
   }
 
+//Animacion que se presenta antes de borrar los elementos repetidos
 animacionOcultarRepetidos = function()
   {
+    //Para los elementos repetidos verticales
     if (mayorRepetidoVertical >= mayorRepetidoHorizontal)
       {
         m = 0;
@@ -557,6 +577,7 @@ animacionOcultarRepetidos = function()
           mayorRepetidoVerticalAnimate = mayorRepetidoVertical;
           mayorRepetidoHorizontalAnimate = mayorRepetidoHorizontal;
           mayorRepetidoAnimate = mayorRepetido;
+          $j('.elemento').droppable('disable');
           $j('.elementoIgualVertical').animate(
             {
               opacity:0
@@ -590,9 +611,9 @@ animacionOcultarRepetidos = function()
               }
           )
 
-
+          $j('.elemento').droppable('enable');
       }
-
+      //Para los elementos repetidos horizontales
       else if (mayorRepetidoHorizontal > mayorRepetidoVertical)
         {
           n = 0;
@@ -603,6 +624,7 @@ animacionOcultarRepetidos = function()
             mayorRepetidoVerticalAnimate = mayorRepetidoVertical;
             mayorRepetidoHorizontalAnimate = mayorRepetidoHorizontal;
             mayorRepetidoAnimate = mayorRepetido;
+            $j('.elemento').droppable('disable');
             $j('.elementoIgualHorizontal').animate(
               {
                 opacity:0
@@ -636,24 +658,116 @@ animacionOcultarRepetidos = function()
                   )
                 }
             )
-
+            $j('.elemento').droppable('enable');
         }
   }
 
+//Funcion que habilita las funciones de drag and drop en los elementos
+  function addCandyEvents()
+    {
+  	   $j('.elemento').draggable(
+         {
+  		     containment: '.panel-tablero',
+  		     droppable: 'img',
+  		     revert: true,
+  		     revertDuration: 500,
+  		     grid: [100, 100],
+  		     zIndex: 10,
+         });
 
+       $j('.elemento').droppable(
+         {
+  		     drop: swapCandy
+  	     });
+      enableCandyEvents();
+    }
+
+//Funcion para habilitar las funciones de drag and drop
+  function enableCandyEvents()
+    {
+  	   $j('.elemento').draggable('enable');
+  	   $j('.elemento').droppable('enable');
+    }
+
+//Funcion para deshabilitar las funciones de drag and drop
+  function disableCandyEvents()
+    {
+  	   $j('.elemento').draggable('disable');
+  	   $j('.elemento').droppable('disable');
+    }
+
+//Funcion para realizar el desplazamiento de dos elementos a traves de drag and drop
+  function swapCandy(event, candyDrag)
+    {
+  	   var candyDrag = $j(candyDrag.draggable);
+  	   var dragSrc = candyDrag.attr('src');
+  	   var candyDrop = $j(this);
+  	   var dropSrc = candyDrop.attr('src');
+  	   candyDrag.attr('src', dropSrc);
+  	   candyDrop.attr('src', dragSrc);
+       movimiento += 1;
+       $j('#movimientos-text').html(movimiento);
+    }
+
+//Funcion que inicia o reinicia el juego precionando el boton dispuesto para tal fin
 $j(function()
   {
     $j("#btn-reinicio").on("click", function()
       {
-        iniciarReloj();
-        setInterval(function()
+        //Se preciona el boton Iniciar
+        if ($j('.btn-reinicio').text() === 'Iniciar')
           {
+            iniciarReloj();
+            $j('#btn-reinicio').text("Reiniciar");
+            addCandyEvents();
+            myVar = setInterval(function()
+              {
+                conformarMatriz();
+                movimientos();
+              },4000);
+          }
+
+        //Se presiona el boton reiniciar
+        else if ($j('.btn-reinicio').text() === 'Reiniciar')
+          {
+            clearInterval(myVar);
+            borradoTotal();
+            iniciarElementos();
+            iniciarMatrices();
+            if ($j('div.panel-tablero, div.time').is(':hidden'))
+              {
+                $j('div.panel-tablero, div.time').show(500);
+                $j('div.score, div.moves, div.panel-score').animate(
+                  {
+                    width:'299.91668701171875px'
+                  },500);
+              }
+            llenarTablero();
             conformarMatriz();
-            movimientos();
-          },4000);
+            obtenerPosicionesElementos();
+            obtenerMatrizAbsoluta();
+            timer.stop();
+            iniciarReloj();
+            addCandyEvents();
+            myVar = setInterval(function()
+              {
+                conformarMatriz();
+                movimientos();
+              },4000);
+          }
       })
   })
 
+//Funcion que borra todos los elementos de la pantalla
+borradoTotal = function()
+  {
+    for (j = 0; j < 8; j ++)
+      {
+        $j(".col-" + j).children("img").detach();
+      }
+  }
+
+//Funcion que activa la busqueda de elementos repetidos y el llenado de los espacios vacios
     movimientos = function()
       {
         setTimeout(function()
@@ -683,11 +797,10 @@ $j(function()
                 {
                   llenarVaciosHorizontal();
                 }
-
           },1000);
       }
 
-
+//Funciones que corren una vez que se corre el archivo ejecutable indez.html
 llenarTablero();
 conformarMatriz();
 obtenerPosicionesElementos();

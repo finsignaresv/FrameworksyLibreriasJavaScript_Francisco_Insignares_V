@@ -31,22 +31,25 @@ body{
   {
     color: #FFFFFF;
   }
-
+/*Clase creada para identidicar a los elementos iguales en direccion vertical*/
 .elementoIgualVertical
   {
 
   }
 
+/*Clase creada para identidicar a los elementos iguales en direccion horizontal*/
   .elementoIgualHorizontal
     {
 
     }
 
+/*Clase creada para identidicar a los elementos qnteriores al que se va a eliminar en direccion vertical*/
 .elementoAnteriorVertical
   {
 
   }
 
+/*Clase creada para identidicar a los elementos qnteriores al que se va a eliminar en direccion horizontal*/
   .elementoAnteriorHorizontal
     {
 
@@ -125,18 +128,20 @@ div[class^='col']{
 
 }
 
+/*Clase creada para identidicar a todos los elementos de la matriz independientemente de si es nuevo, anterior o si se va a eliminar*/
 .elemento
   {
     width: 99.4px;
     height: 96px;
-
   }
 
+/*Clase creada para identidicar un nuevo elemento creado en direccion vertical*/
   .nuevaVertical
     {
       top: 51.933px;
     }
 
+/*Clase creada para identidicar un nuevo elemento creado en direccion horizontal*/
   .nuevaHorizontal
     {
       top: 51.933px;
